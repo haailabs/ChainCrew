@@ -22,7 +22,7 @@ This project orchestrates a set of Blockchain Analyst agents using CrewAI, which
 
 2. Install the required Python packages:
    ```sh
-   pip install -r requirements.txt
+   pip install os requests json asyncio crewai langchain_openai geckoterminal_py
    ```
 
 3. Set up your API keys:
