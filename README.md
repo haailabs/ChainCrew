@@ -3,6 +3,9 @@
 
 This project orchestrates a set of Blockchain Analyst agents using CrewAI, which fetch the latest price action and source code of a smart contract, analyze it for security and financial insights, and compile a comprehensive report.
 
+## Preamble
+This software is a fun proof of concept, and is not intended to provide financial advice or any sort of decision support.
+
 ## Features
 
 - Fetches the latest price action data for a given token using the GeckoTerminal API.
