@@ -3,19 +3,24 @@ import requests
 import json
 import asyncio
 from crewai import Agent, Task, Crew
-from langchain_openai import ChatOpenAI
+from langchain_groq import ChatGroq
 from geckoterminal_py import GeckoTerminalAsyncClient
 
-# Set environment variables for OpenAI API key
-os.environ["OPENAI_API_KEY"] = "your_openai_api_key"
+
+llm = ChatGroq(
+    temperature=0, 
+    groq_api_key = "your_key", 
+    model_name="mixtral-8x7b-32768"
+)
 
 # Fetch the latest price action
 async def fetch_ohlcv():
     client = GeckoTerminalAsyncClient()
-    data = await client.get_ohlcv("eth", "0xBB9bc244D798123fDe783fCc1C72d3Bb8C189413", "12h")
+    data = await client.get_ohlcv("base", "0x7F12d13B34F5F4f0a9449c16Bcd42f0da47AF200", "12h")
     return data
 
 # Fetch the source code of the contract
+'''
 def fetch_contract_sourcecode():
     key = "your_etherscan_api_key"
     url = "https://api.etherscan.io/api"
@@ -33,6 +38,28 @@ def fetch_contract_sourcecode():
         return data['result'][0]['SourceCode']
     else:
         return "Error: " + data['result']
+'''
+def fetch_contract_sourcecode():
+    import requests
+
+    key = "YourApiKeyToken"
+    url = "https://api.basescan.org/api"
+    params = {
+        "module": "contract",
+        "action": "getsourcecode",
+        "address": "0x7F12d13B34F5F4f0a9449c16Bcd42f0da47AF200",
+        "apikey": "your_key"
+    }
+
+    response = requests.get(url, params=params)
+    data = response.json()
+
+    if data['status'] == '1' and data['message'] == 'OK':
+        return data['result'][0]['SourceCode']
+    else:
+        return "Error: " + data['result']
+
+
 
 # Asynchronous function to get both data
 async def get_data():
@@ -46,7 +73,7 @@ engineer = Agent(
     goal='Analyze the smart contract for security issues and potential backdoors.',
     backstory="""You are a highly skilled security engineer specializing in smart contract auditing.""",
     verbose=True,
-    llm=ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.7)
+    llm=llm
 )
 
 financial_analyst = Agent(
@@ -54,7 +81,7 @@ financial_analyst = Agent(
     goal='Analyze the latest price action data for the token.',
     backstory="""You are an experienced financial analyst with expertise in cryptocurrency markets.""",
     verbose=True,
-    llm=ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.7)
+    llm=llm
 )
 
 report_compiler = Agent(
@@ -62,7 +89,7 @@ report_compiler = Agent(
     goal='Compile the analyses from the security engineer and financial analyst into a comprehensive report.',
     backstory="""You are a professional report writer skilled at compiling technical and financial analyses into coherent reports.""",
     verbose=True,
-    llm=ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.7)
+    llm=llm
 )
 
 # Create tasks for your agents
