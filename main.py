@@ -48,7 +48,7 @@ def fetch_contract_sourcecode():
         "module": "contract",
         "action": "getsourcecode",
         "address": "0x7F12d13B34F5F4f0a9449c16Bcd42f0da47AF200",
-        "apikey": "your_key"
+        "apikey": key
     }
 
     response = requests.get(url, params=params)
